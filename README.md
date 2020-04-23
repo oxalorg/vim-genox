@@ -8,16 +8,35 @@ Read my blog post about it here: https://oxal.org/blog/wip-my-first-vim-plugin/
 
 This is currently work in progress. It will not work on your system yet.
 
-## OxBlog
+## Operations
 
-- Quick mapping for editing existing blog entries on my blog:
-    [oxal.org](https://oxal.org/blog/)
-- A shortcut to create a new blog post from within FZF popup.
-    - Write a filename and Press `ctrl-o` to create a new post (a `.md`
-        extension will automatically be added) in the blog directory.
-- From within any existing blog file - rebuild blog and publish/deploy
+### Edit existing blog posts
 
-Default Mapping is
+From any vim session anywhere in the system, simply type `:OxBlog`
+
+This will open up an FZF window of all blog posts. Search and click enter to
+open it in a buffer.
+
+### Creating new blog posts
+
+From any vim session anywhere, simply type `:OxBlog`
+
+This will open up an FZF window where you can type any name and press `ctrl+o`,
+which will create a new blog post in the appropriate directory.
+
+Then with `UltiSnips` configured you can quickly fill the yaml metadata.
+
+*(Check my dotfiles: [oxalorg/dotfiles](https://github.com/oxalorg/dotfiles/))*
+
+### Publish Changes
+
+From any blog open in vim, simply call `:OxPublish` the site will rebuild and changes will be deployed live.
+
+### Delete a blog post
+
+Delete / Unpublish the currently open blog post. To do that run `:OxDelete`
+
+## Default Mappings are
 
 ```
 nmap <leader>nn call :OxBlog<CR>
