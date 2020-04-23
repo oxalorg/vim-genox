@@ -47,6 +47,12 @@ let g:oxblog_venv = "~/.virtualenvs/oxal.org"
 let g:oxblog_venv_activate = g:oxblog_venv . '/bin/activate'
 let g:oxblog_make = printf("source %s && cd %s && make synconly", g:oxblog_venv_activate, s:blog_root_dir)
 
+function! s:oxbakeAndServe()
+    echom 'Running: ' . g:oxblog_make
+    let l:output = system(g:oxblog_make)
+    echom 'Done.'
+endfunction
+
 function! s:oxpublish()
     " Check if the current file belongs inside our blog directory
     let l:curr_path = expand('%')
@@ -55,10 +61,26 @@ function! s:oxpublish()
         return
     endif
 
-    echom 'Running: ' . g:oxblog_make
-    let l:output = system(g:oxblog_make)
+    call s:oxbakeAndServe()
 endfunction
 
 command! -nargs=0 -bang OxPublish call s:oxpublish()
 
 nnoremap <leader>np :OxPublish<CR>
+
+function! s:oxdelete()
+    " Check if the current file belongs inside our blog directory
+    let l:curr_path = expand('%')
+    if l:curr_path !~ '^' . s:blog_root_dir
+        echom "This file is not inside the blog directory"
+        return
+    endif
+
+    echom "Deleting current blog post."
+    call delete(l:curr_path)
+
+    call s:oxbakeAndServe()
+    execute 'bdelete!'
+endfunction
+
+command! -nargs=0 -bang OxDelete call s:oxdelete()
