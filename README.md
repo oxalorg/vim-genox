@@ -1,5 +1,11 @@
 # vim-ox
 
+A vim plugin for automating my blogging workflow. This can also be used as a
+plugin for the static site generator:
+[oxalorg/genox](https://github.com/oxalorg/genox/)
+
+Read my blog post about it here: https://oxal.org/blog/wip-my-first-vim-plugin/
+
 This is currently work in progress. It will not work on your system yet.
 
 ## OxBlog
