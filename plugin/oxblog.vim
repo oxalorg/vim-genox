@@ -1,4 +1,6 @@
 let s:debug = 0
+
+let s:blog_root_dir = "/www/oxal.org"
 let s:blog_dir = "/www/oxal.org/src/blog"
 
 function! s:oxblog_handler(lines)
@@ -40,3 +42,23 @@ endfunction
 command! -nargs=* -bang OxBlog call s:oxblog()
 
 nnoremap <leader>nn :OxBlog<CR>
+
+let g:oxblog_venv = "~/.virtualenvs/oxal.org"
+let g:oxblog_venv_activate = g:oxblog_venv . '/bin/activate'
+let g:oxblog_make = printf("source %s && cd %s && make synconly", g:oxblog_venv_activate, s:blog_root_dir)
+
+function! s:oxpublish()
+    " Check if the current file belongs inside our blog directory
+    let l:curr_path = expand('%')
+    if l:curr_path !~ '^' . s:blog_root_dir
+        echom "This file is not inside the blog directory"
+        return
+    endif
+
+    echom 'Running: ' . g:oxblog_make
+    let l:output = system(g:oxblog_make)
+endfunction
+
+command! -nargs=0 -bang OxPublish call s:oxpublish()
+
+nnoremap <leader>np :OxPublish<CR>
