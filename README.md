@@ -1,10 +1,10 @@
-# vim-ox
+# vim-genox
 
-A vim plugin for automating my blogging workflow. This can also be used as a
-plugin for the static site generator:
+A vim plugin for the static site generator:
 [oxalorg/genox](https://github.com/oxalorg/genox/)
 
-Read my blog post about it here: https://oxal.org/blog/wip-my-first-vim-plugin/
+This has automated my workflow and removed the hurdles to blogging. Read more
+about it on my blog post here: https://oxal.org/blog/wip-my-first-vim-plugin/
 
 This is currently work in progress. It will not work on your system yet.
 
@@ -52,5 +52,5 @@ nmap <leader>np call :OxPublish<CR>
 Using Vim-Plug:
 
 ```
-Plug 'oxalorg/vim-ox'
+Plug 'oxalorg/vim-genox'
 ```
