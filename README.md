@@ -1,5 +1,7 @@
 # vim-ox
 
+This is currently work in progress. It will not work on your system.
+
 ## OxBlog
 
 Quick mapping for editing existing blog entries on my blog:
