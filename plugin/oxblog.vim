@@ -1,11 +1,20 @@
+let s:genox_root_dir = "/www/oxal.org"
+let s:genox_blog_dir = "/www/oxal.org/src/blog"
+let g:genox_venv = "~/.virtualenvs/oxal.org"
+let g:genox_venv_activate = g:genox_venv . '/bin/activate'
+let g:genox_make = printf("source %s && cd %s && make synconly", g:genox_venv_activate, s:genox_root_dir)
+
 let s:debug = 0
 
-let s:blog_root_dir = "/www/oxal.org"
-let s:blog_dir = "/www/oxal.org/src/blog"
+function s:checkIfInsideGenoxRoot(file_path)
+    if a:file_path !~ '^' . s:genox_root_dir
+        return 0
+    endif
+    return 1
+endfunction
 
-function! s:oxblog_handler(lines)
+function! s:genox_handler(lines)
     let query = a:lines[0]
-    " let key_command = get(s:key_mapping, key_pressed, 'e')
     let key_pressed = a:lines[1]
     let note_name = a:lines[2:]
 
@@ -17,9 +26,9 @@ function! s:oxblog_handler(lines)
 
     let note_path = ''
     if key_pressed ==? "ctrl-o"
-        let note_path = fnameescape(printf('%s/%s.md', s:blog_dir, query))
+        let note_path = fnameescape(printf('%s/%s.md', s:genox_blog_dir, query))
     else
-        let note_path = fnameescape(printf('%s/%s', s:blog_dir, join(note_name)))
+        let note_path = fnameescape(printf('%s/%s', s:genox_blog_dir, join(note_name)))
     endif
 
     execute printf('%s %s', 'edit', note_path)
@@ -28,8 +37,8 @@ endfunction
 function! s:oxblog()
     try
         call fzf#run(fzf#wrap({
-            \ 'source': 'find ' . s:blog_dir . ' -type f -printf "%P\n"',
-            \ 'sink*': function('s:oxblog_handler'),
+            \ 'source': 'find ' . s:genox_blog_dir . ' -type f -printf "%P\n"',
+            \ 'sink*': function('s:genox_handler'),
             \ 'options': '--expect=ctrl-o --print-query',
         \}))
     catch
@@ -39,24 +48,17 @@ function! s:oxblog()
     endtry
 endfunction
 
-command! -nargs=* -bang OxBlog call s:oxblog()
-
-nnoremap <leader>nn :OxBlog<CR>
-
-let g:oxblog_venv = "~/.virtualenvs/oxal.org"
-let g:oxblog_venv_activate = g:oxblog_venv . '/bin/activate'
-let g:oxblog_make = printf("source %s && cd %s && make synconly", g:oxblog_venv_activate, s:blog_root_dir)
-
 function! s:oxbakeAndServe()
-    echom 'Running: ' . g:oxblog_make
-    let l:output = system(g:oxblog_make)
+    echom 'Running: ' . g:genox_make
+    let l:output = system(g:genox_make)
     echom 'Done.'
 endfunction
 
 function! s:oxpublish()
     " Check if the current file belongs inside our blog directory
     let l:curr_path = expand('%')
-    if l:curr_path !~ '^' . s:blog_root_dir
+    let ok = call s:checkIfInsideGenoxRoot(l:curr_path)
+    if ok == 0
         echom "This file is not inside the blog directory"
         return
     endif
@@ -64,14 +66,11 @@ function! s:oxpublish()
     call s:oxbakeAndServe()
 endfunction
 
-command! -nargs=0 -bang OxPublish call s:oxpublish()
-
-nnoremap <leader>np :OxPublish<CR>
-
 function! s:oxdelete()
     " Check if the current file belongs inside our blog directory
     let l:curr_path = expand('%')
-    if l:curr_path !~ '^' . s:blog_root_dir
+    let ok = call s:checkIfInsideGenoxRoot(l:curr_path)
+    if ok == 0
         echom "This file is not inside the blog directory"
         return
     endif
@@ -83,4 +82,9 @@ function! s:oxdelete()
     execute 'bdelete!'
 endfunction
 
+command! -nargs=* -bang OxBlog call s:oxblog()
+command! -nargs=0 -bang OxPublish call s:oxpublish()
 command! -nargs=0 -bang OxDelete call s:oxdelete()
+
+nnoremap <leader>nn :OxBlog<CR>
+nnoremap <leader>np :OxPublish<CR>
