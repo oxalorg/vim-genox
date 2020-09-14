@@ -1,12 +1,12 @@
-let s:genox_root_dir = "/www/oxal.org"
-let s:genox_blog_dir = "/www/oxal.org/src/blog"
-let g:genox_venv = "~/.virtualenvs/oxal.org"
-let g:genox_venv_activate = g:genox_venv . '/bin/activate'
-let g:genox_make = printf("source %s && cd %s && make synconly", g:genox_venv_activate, s:genox_root_dir)
+let s:genox_root_dir = get(g:, 'genox_root_dir', '/projects/oxal.org')
+let s:genox_blog_dir = get(g:, 'genox_blog_dir', '/projects/oxal.org/src/blog')
+let s:genox_venv = get(g: , 'genox_venv', '~/.virtualenvs/oxal.org')
+let s:genox_venv_activate = s:genox_venv . '/bin/activate'
+let s:genox_make = get(g:, 'genox_make', printf("source %s && cd %s && make synconly", s:genox_venv_activate, s:genox_root_dir))
 
 let s:debug = 0
 
-function s:checkIfInsideGenoxRoot(file_path)
+function! s:checkIfInsideGenoxRoot(file_path)
     if a:file_path !~ '^' . s:genox_root_dir
         return 0
     endif
@@ -49,8 +49,8 @@ function! s:oxblog()
 endfunction
 
 function! s:oxbakeAndServe()
-    echom 'Running: ' . g:genox_make
-    let l:output = system(g:genox_make)
+    echom 'Running: ' . s:genox_make
+    let l:output = system(s:genox_make)
     echom 'Done.'
 endfunction
 
